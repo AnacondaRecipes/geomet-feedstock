@@ -6,8 +6,9 @@ package:
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 51e92231a0ef6aaa63ac20c443377ba78a303fd2ecd179dc3567de79f3c11605
+  #url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  url: https://github.com/{{ name }}/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
+  sha256: be5c7b8268071bdb146ce16576402b6f436cb793ab210336fe01e2ab39978cac
 
 build:
   number: 0
@@ -28,10 +29,17 @@ requirements:
     - click
 
 test:
+  source_files:
+    - geomet/tests
   imports:
     - geomet
   commands:
     - geomet -h
+    - pip check
+    - pytest -v geomet/tests
+  requires:
+    - pytest
+    - pip
 
 about:
   home: https://github.com/geomet/geomet
