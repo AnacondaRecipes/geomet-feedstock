@@ -1,39 +1,51 @@
 {% set name = "geomet" %}
-{% set version = "1.0.0" %}
+{% set version = "1.1.0" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 0020a4426469934fb58f541cdc23f27c0c0fbbb3d003ee2cb76bb7ffa96a7506
+  #url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  url: https://github.com/{{ name }}/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
+  sha256: be5c7b8268071bdb146ce16576402b6f436cb793ab210336fe01e2ab39978cac
 
 build:
-  noarch: python
   number: 0
-  script: {{ PYTHON }} -m pip install . -vv
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   entry_points:
     - geomet = geomet.tool:cli
+  skip: true  # [py<37]
 
 requirements:
   host:
-    - python >=3.6
+    - python
     - pip
+    - setuptools
+    - wheel
   run:
-    - python >=3.6
-    - six
+    - python
     - click
 
 test:
+  source_files:
+    - geomet/tests
   imports:
     - geomet
   commands:
     - geomet -h
+    - pip check
+    - pytest -v geomet/tests  # [not win]
+    # binascii.Error: Non-hexadecimal digit found for the two windows tests
+    - pytest -v geomet/tests  -k "not (test_stdin_implicit or test_stdin_explicit)" # [win]   
+  requires:
+    - pytest
+    - pip
 
 about:
   home: https://github.com/geomet/geomet
   license: Apache-2.0
+  license_family: Apache
   license_file: LICENSE
   summary: GeoMet - Convert GeoJSON to WKT/WKB, and vice versa
   description: |
@@ -46,6 +58,7 @@ about:
     GeoMet is intended to cover all common use cases for dealing with 2D,
     3D, and 4D geometries (including 'Z', 'M', and 'ZM').
   dev_url: https://github.com/geomet/geomet
+  doc_url: https://github.com/geomet/geomet/blob/master/README.md
 
 extra:
   recipe-maintainers:
