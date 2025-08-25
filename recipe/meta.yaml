@@ -36,7 +36,6 @@ test:
     - geomet.wkt
   requires:
     - pip
-    - pytest
   commands:
     - geomet -h
     - pip check
