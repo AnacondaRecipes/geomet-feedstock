@@ -1,5 +1,5 @@
 {% set name = "geomet" %}
-{% set version = "0.2.1.post1" %}
+{% set version = "1.1.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,11 +7,11 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 91d754f7c298cbfcabd3befdb69c641c27fe75e808b27aa55028605761d17e95
+  sha256: 51e92231a0ef6aaa63ac20c443377ba78a303fd2ecd179dc3567de79f3c11605
 
 build:
   number: 0
-  skip: true # [py<34]
+  skip: true # [py<37]
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   entry_points:
     - geomet = geomet.tool:cli
@@ -20,7 +20,7 @@ requirements:
   host:
     - python
     - pip
-    - setuptools
+    - setuptools >=61
   run:
     - python
     - six
@@ -37,8 +37,9 @@ test:
   requires:
     - pip
   commands:
-    - geomet -h
     - pip check
+    - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
+    - geomet -h
 
 about:
   home: https://github.com/geomet/geomet
